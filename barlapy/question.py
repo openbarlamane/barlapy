@@ -94,12 +94,18 @@ class Question:
                 offset = 0
 
             question_date = ''
-            if qb13.find_all('div')[offset].text.split(':')[0].lstrip().rstrip() == 'تاريخ السؤال':
-                question_date = qb13.find_all('div')[offset].text.split(':')[1].replace('\n', '').lstrip().rstrip()
-
             question_text = ''
-            if qb13.find_all('div')[offset + 1].text.split(':')[0].lstrip().rstrip() == 'السؤال':
-                question_text = qb13.find_all('div')[offset + 1].find('p').text.lstrip().rstrip()
+            if qtype == "written":
+                if qb13.find_all('div')[offset].text.split(':')[0].lstrip().rstrip() == 'تاريخ السؤال':
+                    question_date = qb13.find_all('div')[offset].text.split(':')[1].replace('\n', '').lstrip().rstrip()
+
+                if qb13.find_all('div')[offset + 1].text.split(':')[0].lstrip().rstrip() == 'السؤال':
+                    question_text = qb13.find_all('div')[offset + 1].find('p').text.lstrip().rstrip()
+            elif qtype == "oral":
+                # TODO: check if  there are cases where the date is given
+
+                if qb13.find_all('div')[0].text.split(':')[0].lstrip().rstrip() == 'السؤال':
+                    question_text = qb13.find_all('div')[0].find('p').text.lstrip().rstrip()
 
             answer_doc = ''
             answer_content = s.find_all(class_='q-block2')
