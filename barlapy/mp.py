@@ -5,7 +5,28 @@ from bs4 import BeautifulSoup
 
 from utils import BASE_URL
 from question import Question
-from parser import parse_mp_questions
+
+def parse_mp_questions(url):
+    url = url + "?page="
+    
+    questions = []
+    page = 0
+    while True:
+        u = url + str(page)
+        r = requests.get(u)
+        s = BeautifulSoup(r.text, 'html.parser')
+
+        for elt in s.find_all(class_='q-block3'):
+            question_url = BASE_URL + elt.find_all('a', href=True)[0]['href']
+            q = Question.from_url(question_url)
+            if q:
+                questions.append(q)
+
+        if s.find_all('li', class_='next') == []:
+            break
+        page += 1
+
+    return questions
 
 class MP:
     def __init__(self, url = None, name = None, image = None, party = None, team = None, district = None,
@@ -22,9 +43,8 @@ class MP:
         self.missions = missions or []
         self.media = media or []
 
-
     @staticmethod
-    def from_url(url):
+    def from_url(url, parse_questions = False):
         r = requests.get(url)
         s = BeautifulSoup(r.text, 'html.parser')
 
@@ -37,26 +57,30 @@ class MP:
             subinfo = s.find_all(class_='mhr-b1_info-in')[0].find_all(class_='mhr-b1-info-l')[0].find_all('div')
             subinfo += s.find_all(class_='mhr-b1_info-in')[0].find_all(class_='mhr-b1-info-r')[0].find_all('div')
 
+            party = ''
+            team = ''
+            district = ''
+            legislature = ''
             for _ in subinfo:
                 _ = _.text
 
                 title = _.split(':')[0].lstrip().rstrip()
 
-                party = ''
-                team = ''
-                district = ''
-                legislature = ''
                 if title == 'الحزب':
-                    party = _.split(':')[1].lstrip().rstrip() or None
+                    party = _.split(':')[1].lstrip().rstrip()
                 if title == 'الفريق أو المجموعة':
-                    team = _.split(':')[1].lstrip().rstrip() or None
+                    team = _.split(':')[1].lstrip().rstrip()
                 if title == 'الدائرة الإنتخابية':
-                    district = _.split(':')[1].lstrip().rstrip() or None
+                    district = _.split(':')[1].lstrip().rstrip()
                 if title == 'الولاية التشريعية':
-                    legislature = _.split(':')[1].lstrip().rstrip() or None
+                    legislature = _.split(':')[1].lstrip().rstrip()
 
             q_slider = BASE_URL + s.find('a', class_='see-more-btn')['href']
-            mp_questions = parse_mp_questions(q_slider)
+
+            if parse_questions:
+                mp_questions = parse_mp_questions(q_slider)
+            else:
+                mp_questions = None
 
             mp = MP(url,
                     name,
@@ -86,8 +110,7 @@ class MP:
             'party': self.party,
             'team': self.team,
             'district': self.district,
-            'legislature': self.legislature,
-            'questions': [q.to_dict() for q in self.questions]
+            'legislature': self.legislature
         }
 
     def __str__(self):
