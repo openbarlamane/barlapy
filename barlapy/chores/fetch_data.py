@@ -24,7 +24,6 @@ def populate_questions(type, f):
             outf.write('[')
             while not page < 0:
                 u = url + str(page)
-                print('Parsing page: %d' % page)
                 questions = parse_questions_in_page(u)
                 for q in questions:
                     d = q.to_dict()
@@ -53,8 +52,6 @@ def populate_mps(f):
 
                 json.dump(d, outf)
 
-                print("Dumped MP %s" % d['name'])
-
                 if not mp == mps[len(mps) - 1]:
                     outf.write(',')
             outf.write(']')
@@ -62,6 +59,3 @@ def populate_mps(f):
 
     except Exception as e:
         print("Exception: ", e)
-
-
-populate_mps("mps_20202806.json")
