@@ -63,7 +63,7 @@ class Question:
             # XXX How do we handle RE faulty cases ?
             p = re.compile('رقم السؤال : ([0-9]+)')
             res = p.match(qb11[0].text.lstrip().rstrip())
-            id = res.group(1)
+            id = int(res.group(1))
 
             p = re.compile('الموضوع : (.*)')
             res = p.match(qb11[1].text.lstrip().rstrip())
