@@ -83,11 +83,10 @@ class Question:
 
             offset = 0
             designated_ministry = ''
-            if status == 'answered':
+            # XXX : are there cases where there are multiple ministries involved?
+            if qb13.find_all('div')[0].text.split(':')[0].lstrip().rstrip() == 'الوزارة المختصة':
+                designated_ministry = qb13.find_all('div')[0].text.split(':')[1].replace('\n', '').lstrip().rstrip()
                 offset = 1
-                # XXX : can there be cases w/ ministries to parse?
-                if qb13.find_all('div')[0].text.split(':')[0].lstrip().rstrip() == 'الوزارة المختصة':
-                    designated_ministry = qb13.find_all('div')[0].text.split(':')[1].replace('\n', '').lstrip().rstrip()
 
             # reset offset when there isn't any designated ministry info
             if designated_ministry == '':
