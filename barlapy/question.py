@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 import re
 from pyarabic import araby
 
-from utils import BASE_URL
-
 class Question:
     def __init__(self, id = None, page_url = None, qtype = None, topic = None, 
                 qdate = None, qtext = None, authors = None, status = None, 
