@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 import re
 from pyarabic import araby
 
-from utils import BASE_URL
-
 class Question:
     def __init__(self, id = None, page_url = None, qtype = None, topic = None, 
                 qdate = None, qtext = None, authors = None, status = None, 
@@ -127,6 +125,15 @@ class Question:
         except Exception as e:
             print('There was an exception: %s' % e)
             return None
+
+    def get_id(self):
+        return self.id
+
+    def get_text(self):
+        return self.qtext
+
+    def get_url(self):
+        return self.page_url
 
     def to_dict(self):
         return {
