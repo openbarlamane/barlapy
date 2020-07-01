@@ -128,6 +128,15 @@ class Question:
             print('There was an exception: %s' % e)
             return None
 
+    def get_id(self):
+        return self.id
+
+    def get_text(self):
+        return self.qtext
+
+    def get_url(self):
+        return self.page_url
+
     def to_dict(self):
         return {
             'id': self.id,
