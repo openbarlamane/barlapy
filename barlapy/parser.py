@@ -3,8 +3,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-from utils import BASE_URL
-from question import Question
+from .utils import BASE_URL
+from .question import Question
 
 def parse_all_mps():
     index_url = BASE_URL + "/ar/%D8%AF%D9%84%D9%8A%D9%84-%D8%A3%D8%B9%D8%B6%D8%A7%D8%A1-%D9%85%D8%AC%D9%84%D8%B3-%D8%A7%D9%84%D9%86%D9%88%D8%A7%D8%A8?page="

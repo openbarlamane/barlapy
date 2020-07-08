@@ -135,6 +135,16 @@ class Question:
     def get_url(self):
         return self.page_url
 
+    def get_authors(self):
+        return self.authors
+
+    def get_type(self):
+        return self.qtype
+
+    def get_answer(self):
+        return self.answer_url
+
+
     def to_dict(self):
         return {
             'id': self.id,
