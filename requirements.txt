@@ -1,1 +1,3 @@
-PyArabic==0.6.7
+PyArabic == 0.6.8
+beautifulsoup4 == 4.6.3
+requests == 2.9.1
