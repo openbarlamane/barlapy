@@ -86,10 +86,6 @@ class Question:
                 designated_ministry = qb13.find_all('div')[0].text.split(':')[1].replace('\n', '').lstrip().rstrip()
                 offset = 1
 
-            # reset offset when there isn't any designated ministry info
-            if designated_ministry == '':
-                offset = 0
-
             question_date = ''
             question_text = ''
             if qtype == "written":
@@ -100,9 +96,8 @@ class Question:
                     question_text = qb13.find_all('div')[offset + 1].find('p').text.lstrip().rstrip()
             elif qtype == "oral":
                 # TODO: check if  there are cases where the date is given
-
-                if qb13.find_all('div')[0].text.split(':')[0].lstrip().rstrip() == 'السؤال':
-                    question_text = qb13.find_all('div')[0].find('p').text.lstrip().rstrip()
+                if qb13.find_all('div')[offset].text.split(':')[0].lstrip().rstrip() == 'السؤال':
+                    question_text = qb13.find_all('div')[offset].find('p').text.lstrip().rstrip()
 
             answer_doc = ''
             answer_content = s.find_all(class_='q-block2')
@@ -134,6 +129,16 @@ class Question:
 
     def get_url(self):
         return self.page_url
+
+    def get_authors(self):
+        return self.authors
+
+    def get_type(self):
+        return self.qtype
+
+    def get_answer(self):
+        return self.answer_url
+
 
     def to_dict(self):
         return {
