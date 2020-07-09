@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 
+import datetime
 import requests
 from bs4 import BeautifulSoup
 import re
 from pyarabic import araby
+
+from .utils import format_raw_date_to_isoformat, arabic_string_eq
 
 class Question:
     def __init__(self, id = None, page_url = None, qtype = None, topic = None, 
@@ -37,9 +40,9 @@ class Question:
             title.lstrip().rstrip()
 
             qtype = 'undefined'
-            if title == "الأسئلة الكتابية":
+            if arabic_string_eq(title, "الأسئلة الكتابية"):
                 qtype = 'written'
-            elif title == "الأسئلة الشفوية":
+            elif arabic_string_eq(title, "الأسئلة الشفوية"):
                 qtype = 'oral'
 
             spans = s.find_all(class_='q-b1-1')[0].find_all('span')
@@ -67,9 +70,11 @@ class Question:
             res = p.match(qb11[1].text.lstrip().rstrip())
             topic = res.group(1)
 
-            answer_date = ''
-            if qb11[2].text.split(':')[0].lstrip().rstrip() == 'تاريخ الجواب':
-                answer_date = qb11[3].text.lstrip().rstrip() or ''
+            answer_date_raw = ''
+            if arabic_string_eq(qb11[2].text.split(':')[0].lstrip().rstrip(), 'تاريخ الجواب'):
+                answer_date_raw = qb11[3].text.lstrip().rstrip()
+            answer_date = format_raw_date_to_isoformat(answer_date_raw)
+            
 
             qb12 = content.find_all(class_='q-b1-2 row')[0]
             team = qb12.find_all(class_='col-md-5')[0].find_all('a')[0].text
@@ -82,22 +87,24 @@ class Question:
             offset = 0
             designated_ministry = ''
             # XXX : are there cases where there are multiple ministries involved?
-            if qb13.find_all('div')[0].text.split(':')[0].lstrip().rstrip() == 'الوزارة المختصة':
+            if arabic_string_eq(qb13.find_all('div')[0].text.split(':')[0].lstrip().rstrip(), 'الوزارة المختصة'):
                 designated_ministry = qb13.find_all('div')[0].text.split(':')[1].replace('\n', '').lstrip().rstrip()
                 offset = 1
 
-            question_date = ''
+            question_date_raw = ''
             question_text = ''
             if qtype == "written":
-                if qb13.find_all('div')[offset].text.split(':')[0].lstrip().rstrip() == 'تاريخ السؤال':
-                    question_date = qb13.find_all('div')[offset].text.split(':')[1].replace('\n', '').lstrip().rstrip()
+                if arabic_string_eq(qb13.find_all('div')[offset].text.split(':')[0].lstrip().rstrip(), 'تاريخ السؤال'):
+                    question_date_raw = qb13.find_all('div')[offset].text.split(':')[1].replace('\n', '').lstrip().rstrip()
 
-                if qb13.find_all('div')[offset + 1].text.split(':')[0].lstrip().rstrip() == 'السؤال':
+                if arabic_string_eq(qb13.find_all('div')[offset + 1].text.split(':')[0].lstrip().rstrip(), 'السؤال'):
                     question_text = qb13.find_all('div')[offset + 1].find('p').text.lstrip().rstrip()
             elif qtype == "oral":
                 # TODO: check if  there are cases where the date is given
-                if qb13.find_all('div')[offset].text.split(':')[0].lstrip().rstrip() == 'السؤال':
+                if arabic_string_eq(qb13.find_all('div')[offset].text.split(':')[0].lstrip().rstrip(), 'السؤال'):
                     question_text = qb13.find_all('div')[offset].find('p').text.lstrip().rstrip()
+
+            question_date = format_raw_date_to_isoformat(question_date_raw)
 
             answer_doc = ''
             answer_content = s.find_all(class_='q-block2')
@@ -137,8 +144,10 @@ class Question:
         return self.qtype
 
     def get_answer(self):
-        return self.answer_url
+        return {"url": self.answer_url, "date": self.answer_date}
 
+    def get_date(self):
+        return self.qdate
 
     def to_dict(self):
         return {

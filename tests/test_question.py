@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))
@@ -63,17 +64,26 @@ class TestQuestionParsing(unittest.TestCase):
             }
         ]
 
+        self.qdate_cases = [
+            {
+                "url": "https://www.chambredesrepresentants.ma/ar/%D9%85%D8%B1%D8%A7%D9%82%D8%A8%D8%A9-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%AD%D9%83%D9%88%D9%85%D9%8A/%D8%A7%D9%84%D8%A3%D8%B3%D9%80%D8%A6%D9%84%D8%A9-%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8%D9%8A%D8%A9/%D8%A5%D8%B9%D9%81%D8%A7%D8%A1%D8%A7%D8%AA-%D8%A7%D9%84%D9%85%D9%88%D8%B8%D9%81%D9%8A%D9%86-%D9%81%D9%8A-%D9%82%D8%B7%D8%A7%D8%B9-%D8%A7%D9%84%D8%AA%D8%B9%D9%84%D9%8A%D9%85",
+                "date": datetime(2017, 2, 28)
+            }
+        ]
+
         self.qanswer_parsing_cases = [
             {
                 "url": "https://www.chambredesrepresentants.ma/ar/%D9%85%D8%B1%D8%A7%D9%82%D8%A8%D8%A9-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%AD%D9%83%D9%88%D9%85%D9%8A/%D8%A7%D9%84%D8%A3%D8%B3%D9%80%D8%A6%D9%84%D8%A9-%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8%D9%8A%D8%A9/%D9%85%D8%A2%D9%84-%D9%85%D8%B4%D8%B1%D9%88%D8%B9-%D8%AA%D9%83%D8%B3%D9%8A%D8%A9-%D9%85%D9%84%D8%B9%D8%A8-%D9%85%D9%88%D9%84%D8%A7%D9%8A-%D8%B9%D8%A8%D8%AF-%D8%A7%D9%84%D9%84%D9%87-%D8%A8%D8%A7%D9%84%D8%B9%D8%B4%D8%A8-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A-%D8%A8%D9%85%D8%AF%D9%8A%D9%86%D8%A9",
-                "answer": "https://www.chambredesrepresentants.ma/sites/default/files/reponses_questions_ecrites/rq_28.pdf"
+                "answer_url": "https://www.chambredesrepresentants.ma/sites/default/files/reponses_questions_ecrites/rq_28.pdf",
+                "date": datetime(2017, 5, 18)
             },
 
             # Note: the following question is old enough (the oldest unanswered)
             # not to be answered in the future...
             {
                 "url": "https://www.chambredesrepresentants.ma/ar/%D9%85%D8%B1%D8%A7%D9%82%D8%A8%D8%A9-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%AD%D9%83%D9%88%D9%85%D9%8A/%D8%A7%D9%84%D8%A3%D8%B3%D9%80%D8%A6%D9%84%D8%A9-%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8%D9%8A%D8%A9/%D8%A7%D9%84%D9%88%D8%B3%D8%AE-%D9%81%D9%8A-%D9%82%D8%B3%D9%85-%D8%A7%D9%84%D9%88%D9%84%D8%A7%D8%AF%D8%A9-%D8%A8%D9%85%D8%B3%D8%AA%D8%B4%D9%81%D9%89-%D8%A7%D8%A8%D9%86-%D8%B3%D9%8A%D9%86%D8%A7%D8%8C-%D8%A7%D9%84%D8%B1%D8%A8%D8%A7%D8%B7",
-                "answer": ""
+                "answer_url": "",
+                "date": ''
             }
         ]
 
@@ -94,9 +104,18 @@ class TestQuestionParsing(unittest.TestCase):
         for q in self.qtype_cases:
             self.assertEqual(Question.from_url(q['url']).get_type(), q['type'])
 
+    def test_question_date_parsing(self):
+        for q in self.qdate_cases:
+            self.assertEqual(Question.from_url(q['url']).get_date(), q['date'].isoformat())
+
     def test_answer_parsing(self):
         for q in self.qanswer_parsing_cases:
-            self.assertEqual(Question.from_url(q['url']).get_answer(), q['answer'])
+            question = Question.from_url(q['url'])
+            self.assertEqual(question.get_answer()['url'], q['answer_url'])
+            if q['date'] != '':
+                self.assertEqual(question.get_answer()['date'], q['date'].isoformat())
+            else:
+                self.assertEqual(question.get_answer()['date'], q['date'])
 
 if __name__ == '__main__':
     unittest.main()
