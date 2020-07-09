@@ -75,7 +75,6 @@ class Question:
                 answer_date_raw = qb11[3].text.lstrip().rstrip()
             answer_date = format_raw_date_to_isoformat(answer_date_raw)
             
-
             qb12 = content.find_all(class_='q-b1-2 row')[0]
             team = qb12.find_all(class_='col-md-5')[0].find_all('a')[0].text
             questioners = []

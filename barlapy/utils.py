@@ -51,7 +51,7 @@ def format_raw_date_to_isoformat(str):
     """
     Example: الجمعة 11 غشت 2017 -> 2017-08-11T00:00:00
     """
-    p = re.compile('(\w+) (\d+) (\w+) (\d+)')
+    p = re.compile(r'(\w+) (\d+) (\w+) (\d+)')
     r = p.match(str)
     if r:
         d = int(r.group(2))
