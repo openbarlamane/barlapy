@@ -1,3 +1,4 @@
+import time
 import sys, os
 from datetime import datetime
 
@@ -9,9 +10,13 @@ from barlapy.question import Question
 db = connect_to_db()
 
 questions = db['questions']
-unanswered_questions = questions.find({"type": "written", "status": "unanswered"}).sort([("date", 1)])
 
-i = 0
+search_query = {"type": "written", "status": "unanswered"}
+unanswered_questions = questions.find(search_query).sort([("date", 1)])
+
+print("Found: %d documents" % questions.count_documents(search_query))
+
+start = time.time()
 
 for q in unanswered_questions:
     new_q = Question.from_url(q['url'])
@@ -23,4 +28,7 @@ for q in unanswered_questions:
         new_val = {"$set": {"status": "answered", "updated_at": update_ts}}
         res = questions.update_one(query, new_val)
 
-        print("Modified: %d, id: %d" % (res.modified_count, res.upserted_id)
+        print("Modified: %d, id: %d" % (res.modified_count, res.upserted_id))
+
+end = time.time()
+print("Elapsed: %d seconds" % (end - start))
