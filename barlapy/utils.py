@@ -58,7 +58,7 @@ def format_raw_date_to_isoformat(str):
         m = arabic_month_to_number(r.group(3))
         y = int(r.group(4))
         dt =  datetime.strptime("%d/%d/%d" % (d, m, y), "%d/%m/%Y")
-        return dt.isoformat()
+        return dt
 
     return ''
 
