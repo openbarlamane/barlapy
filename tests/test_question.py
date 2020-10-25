@@ -106,14 +106,14 @@ class TestQuestionParsing(unittest.TestCase):
 
     def test_question_date_parsing(self):
         for q in self.qdate_cases:
-            self.assertEqual(Question.from_url(q['url']).get_date(), q['date'].isoformat())
+            self.assertEqual(Question.from_url(q['url']).get_date(), q['date'])
 
     def test_answer_parsing(self):
         for q in self.qanswer_parsing_cases:
             question = Question.from_url(q['url'])
             self.assertEqual(question.get_answer()['url'], q['answer_url'])
             if q['date'] != '':
-                self.assertEqual(question.get_answer()['date'], q['date'].isoformat())
+                self.assertEqual(question.get_answer()['date'], q['date'])
             else:
                 self.assertEqual(question.get_answer()['date'], q['date'])
 
