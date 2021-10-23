@@ -22,7 +22,7 @@ class Question:
         self.answer_date = answer_date
         self.answer_url = answer_url
         self.min = designated_min
-        self.legislature = '2016-2021'
+        self.legislature = '2021-2026'
 
     @staticmethod
     def from_url(url):
