@@ -21,6 +21,8 @@ def parse_all_mps():
         for result in results:
             profile_url = BASE_URL + result.find_all('a', href=True)[0]['href']
             mp = MP.from_url(profile_url)
+            if mp is not None:
+                mps.append(mp)
 
         if s.find_all('li', class_='next') == []:
             break
