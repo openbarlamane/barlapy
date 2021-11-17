@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import re
 from pyarabic import araby
 
-from barlapy.utils import format_raw_date_to_isoformat, arabic_string_eq
+from .utils import format_raw_date_to_isoformat, arabic_string_eq
 
 class Question:
     def __init__(self, id = None, page_url = None, qtype = None, topic = None, 

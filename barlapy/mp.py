@@ -3,8 +3,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-from barlapy.utils import BASE_URL
-from barlapy.question import Question
+from .utils import BASE_URL
+from .question import Question
 
 def parse_mp_questions(url):
     url = url + "?page="
