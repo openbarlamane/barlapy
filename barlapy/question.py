@@ -34,7 +34,7 @@ class Question:
         s = BeautifulSoup(r.text, 'html.parser')
 
         try:
-            # Note : strip_tatweel below is mandatory, it took me several hours of scratching
+            # Note : strip_tatweel below is mandatory, it took me several hours of scratching my head
             title = araby.strip_tatweel(s.find_all('h1', class_='section-title title-global lang_ar')[0].text)
             title.lstrip().rstrip()
 
@@ -75,7 +75,6 @@ class Question:
             answer_date = format_raw_date_to_isoformat(answer_date_raw)
             
             qb12 = content.find_all(class_='q-b1-2 row')[0]
-            team = qb12.find_all(class_='col-md-5')[0].find_all('a')[0].text
             questioners = []
             for q in qb12.find_all(class_='col-md-7')[0].find_all(class_='q-b1-2-s-item'):
                 questioners.append(q.find_all(class_='q-name')[0].find('a').text.lstrip().rstrip())
